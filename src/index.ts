@@ -1,7 +1,6 @@
 ///<reference path="../lib/catalog.d.ts" />
 import * as GitHub from "github";
 import * as Ajv from "ajv";
-import { v4 as uuidV4 } from "uuid";
 import * as CJSON from "comment-json";
 import * as fs from "fs";
 import * as path from "path";
@@ -10,6 +9,7 @@ import * as pify from "pify";
 import * as decompress from "decompress";
 
 export const CATALOG_JSON  = "catalog.json";
+export const JSON_ENCODING = "utf8";
 export const REPOSITORY_JSON = "rubic-repository.json";
 export const RELEASE_JSON  = "release.json";
 export const ASSET_PATTERN = /\.(zip|tar\.gz|tgz)$/i;
@@ -44,7 +44,7 @@ let ajv: Ajv.Ajv;
 function loadSchema() {
     ajv = new Ajv();
     let schema = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "catalog.schema.json"), "utf8")
+        fs.readFileSync(path.join(__dirname, "catalog.schema.json"), JSON_ENCODING)
     );
     schema.id = ROOT_ID;
     ajv.compile(schema);
@@ -68,9 +68,10 @@ export function getValidator(name?: string): Ajv.ValidateFunction {
  */
 export class RubicCatalogFetcher {
     private gh: GitHub;
-    private logger: ConsoleLogger;
+    public logger: ConsoleLogger;
     private limit_used: number = 0;
     private limit_remaining: number = null;
+    private temp_id_next: number = 1;
 
     /**
      * Construct Rubic catalog fetcher
@@ -122,8 +123,8 @@ export class RubicCatalogFetcher {
             current = <any>{};
         }
         if (current.uuid == null) {
-            current.uuid = uuidV4();
-            this.logger.info(`Assigned a new UUID for this repository (${current.uuid})`);
+            current.uuid = `00000000-${("0000" + (this.temp_id_next++).toString()).substr(-4)}-0000-0000-000000000000`;
+            this.logger.info(`Assigned a temporary UUID for this repository (${current.uuid})`);
         }
         current.host = repo.host;
         current.owner = repo.owner;

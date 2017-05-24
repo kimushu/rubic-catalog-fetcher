@@ -16,8 +16,7 @@
     "decompress": "^4.2.0",
     "github": "^9.2.0",
     "pify": "^2.3.0",
-    "request": "^2.81.0",
-    "uuid": "^3.0.1"
+    "request": "^2.81.0"
   },
   "devDependencies": {
     "@types/node": "^7.0.18",
