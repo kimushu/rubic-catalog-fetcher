@@ -131,17 +131,8 @@ export class RubicCatalogFetcher {
         current.repo = repo.repo;
         current.branch = branch;
 
-        return Promise.resolve()
-        .then(() => {
-            return this.fetchRepositoryJSON(current);
-        })
-        .then(() => {
-            this.reportRateLimit();
+        return this.fetchRepositoryJSON(current).then(() => {
             return current;
-        }, (reason) => {
-            this.reportRateLimit();
-            this.logger.error(`${reason}`);
-            throw reason;
         });
     }
 
@@ -345,7 +336,7 @@ export class RubicCatalogFetcher {
     /**
      * Report RateLimit status for GitHub API
      */
-    private reportRateLimit(): void {
+    reportRateLimit(): void {
         if (this.limit_remaining != null) {
             this.logger.info(`(GitHub API RateLimit) Used: ${this.limit_used}, Remaining: ${this.limit_remaining}`);
         }

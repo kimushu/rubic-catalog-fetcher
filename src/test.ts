@@ -86,5 +86,10 @@ Promise.resolve()
     });
 })
 .then(() => {
+    fetcher.reportRateLimit();
     process.exit();
+}, (reason) => {
+    fetcher.reportRateLimit();
+    console.error(reason);
+    process.exit(1);
 });
