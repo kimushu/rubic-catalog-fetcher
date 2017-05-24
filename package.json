@@ -36,7 +36,6 @@
     "precompile": "npm run update-schema",
     "prepublish": "npm run compile"
   },
-  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kimushu/rubic-catalog-fetcher.git"
