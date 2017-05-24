@@ -1,0 +1,5 @@
+/node_modules
+/typings
+/auth.json
+/lib/**/*
+/src/catalog.d.ts
