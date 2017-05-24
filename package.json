@@ -1,6 +1,6 @@
 {
-  "name": "rubic-catalog-fetcher",
-  "version": "1.0.0",
+  "name": "@rubic/catalog-fetcher",
+  "version": "0.99.4",
   "description": "Rubic Catalog fetcher",
   "main": "lib/index.js",
   "files": [
@@ -27,12 +27,14 @@
     "typescript": "^2.3.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "pretest": "npm run compile",
+    "test": "node ./lib/test.js",
     "update-schema:ts": "download -o src https://github.com/kimushu/rubic-vscode/raw/master/schema/catalog.d.ts",
     "update-schema:json": "download -o lib https://github.com/kimushu/rubic-vscode/raw/master/schema/catalog.schema.json",
     "update-schema": "npm-run-all -p update-schema:*",
     "compile": "tsc -p .",
-    "precompile": "npm run update-schema"
+    "precompile": "npm run update-schema",
+    "prepublish": "npm run compile"
   },
   "private": true,
   "repository": {

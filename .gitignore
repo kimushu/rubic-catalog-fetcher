@@ -3,3 +3,4 @@
 /auth.json
 /lib/**/*
 /src/catalog.d.ts
+/*.tgz

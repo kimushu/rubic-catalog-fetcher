@@ -18,10 +18,12 @@ export const OFFICIAL_CATALOG = {
     repo: "rubic-catalog",
     branch: "vscode-master"
 };
+const USER_AGENT = "@rubic/catalog-fetcher";
 
 export interface RubicCatalogFetcherOptions {
     auth?: GitHub.Auth;
     logger?: ConsoleLogger;
+    user_agent?: string;
 }
 export interface ConsoleLogger {
     log: Function;
@@ -62,7 +64,7 @@ export class RubicCatalogFetcher {
         this.gh = new GitHub({
             protocol: "https",
             headers: {
-                "user-agent": "rubic-catalog-fetcher"
+                "user-agent": USER_AGENT + (options.user_agent ? ` (${options.user_agent})` : "")
             },
             Promise: Promise
         });
@@ -117,13 +119,11 @@ export class RubicCatalogFetcher {
             return this.fetchRepositoryJSON(current);
         })
         .then(() => {
-            return this.fetchReleaseList(current);
-        })
-        .then(() => {
             this.reportRateLimit();
             return current;
         }, (reason) => {
             this.reportRateLimit();
+            this.logger.error(`${reason}`);
             throw reason;
         });
     }
@@ -163,6 +163,7 @@ export class RubicCatalogFetcher {
             );
             this.validate(repos_json, "RepositoryDetail", RELEASE_JSON);
             repo.cache = repos_json;
+            return this.fetchReleaseList(repo);
         });
     }
 
