@@ -1,3 +1,4 @@
+///<reference path="../lib/catalog.d.ts" />
 import * as GitHub from "github";
 import * as Ajv from "ajv";
 import { v4 as uuidV4 } from "uuid";
@@ -7,7 +8,6 @@ import * as path from "path";
 import * as request from "request";
 import * as pify from "pify";
 import * as decompress from "decompress";
-///<reference src="./catalog.d.ts">
 
 export const CATALOG_JSON  = "catalog.json";
 export const REPOSITORY_JSON = "rubic-repository.json";
