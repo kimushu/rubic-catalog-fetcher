@@ -37,6 +37,8 @@ export interface GitHubRepository {
     repo: string;
     branch?: string;
 }
+
+const ROOT_ID = "root";
 let ajv: Ajv.Ajv;
 
 function loadSchema() {
@@ -44,12 +46,26 @@ function loadSchema() {
     let schema = JSON.parse(
         fs.readFileSync(path.join(__dirname, "catalog.schema.json"), "utf8")
     );
-    schema.id = "root";
+    schema.id = ROOT_ID;
     ajv.compile(schema);
 }
 
 loadSchema();
 
+/**
+ * Get ajv-based validator for Rubic catalog schema
+ * @param name Name of interface
+ */
+export function getValidator(name?: string): Ajv.ValidateFunction {
+    if (name == null) {
+        return ajv.getSchema(ROOT_ID);
+    }
+    return ajv.getSchema(`${ROOT_ID}#/definitions/RubicCatalog.${name}`);
+}
+
+/**
+ * Catalog fetcher for Rubic
+ */
 export class RubicCatalogFetcher {
     private gh: GitHub;
     private logger: ConsoleLogger;
@@ -128,8 +144,14 @@ export class RubicCatalogFetcher {
         });
     }
 
+    /**
+     * Validate object and report
+     * @param obj Object to validate
+     * @param name Name of interface
+     * @param title Name of object
+     */
     private validate(obj: any, name: string, title: string): void {
-        let validator = ajv.getSchema(`root#/definitions/RubicCatalog.${name}`);
+        let validator = getValidator(name);
         if (!validator(obj)) {
             let { errors } = validator;
             this.logger.error(`${title} has ${errors.length} error(s)`);
@@ -162,7 +184,11 @@ export class RubicCatalogFetcher {
                 Buffer.from(result.data.content, result.data.encoding).toString(), null, true
             );
             this.validate(repos_json, "RepositoryDetail", RELEASE_JSON);
+            if (repos_json.releases == null) {
+                repos_json.releases = repo.cache && repo.cache.releases;
+            }
             repo.cache = repos_json;
+
             return this.fetchReleaseList(repo);
         });
     }
@@ -244,6 +270,7 @@ export class RubicCatalogFetcher {
             // Report removed releases
             for (let tag of tags_src) {
                 if (tags_exists.indexOf(tag) < 0) {
+                    dest.splice(dest.findIndex((rel) => rel.tag === tag), 1);
                     this.logger.info(`Removed an old release: ${tag}`);
                 }
             }
