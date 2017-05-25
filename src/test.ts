@@ -14,7 +14,7 @@ let fetcher = new RubicCatalogFetcher(options);
 Promise.resolve()
 .then(() => {
     console.log("=".repeat(80));
-    console.log("TEST 1 (Non-merge)")
+    console.log("TEST 1 (Non-merge)");
     return fetcher.fetchRepository({
         host: "github",
         owner: "kimushu",
@@ -27,7 +27,7 @@ Promise.resolve()
 })
 .then(() => {
     console.log("=".repeat(80));
-    console.log("TEST 2 (Merge)")
+    console.log("TEST 2 (Merge)");
     return fetcher.fetchRepository({
         host: "github",
         owner: "kimushu",

@@ -2,5 +2,5 @@
 /typings
 /auth.json
 /lib/**/*
-/src/catalog.d.ts
+!/lib/catalog.d.ts
 /*.tgz
