@@ -246,6 +246,16 @@ declare namespace RubicCatalog {
         interface Mruby extends Common {
             /** バージョン(x.x.x) */
             version: string;
+            /** mrbgemの一覧 */
+            mrbgems?: MrubyGem[];
+        }
+
+        /** mruby用gem定義 */
+        interface MrubyGem {
+            /** mrbgemの名称 */
+            name: string;
+            /** 説明文(英語のみ) */
+            description: string;
         }
 
         /** JavaScript(ES5)ランタイム(name=duktape) */
