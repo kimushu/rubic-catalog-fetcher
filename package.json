@@ -1,6 +1,6 @@
 {
   "name": "@rubic/catalog-fetcher",
-  "version": "0.99.11",
+  "version": "0.99.12",
   "description": "Rubic Catalog fetcher",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
