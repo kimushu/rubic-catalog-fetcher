@@ -155,6 +155,9 @@ declare namespace RubicCatalog {
 
         /** リリース一覧 */
         releases?: ReleaseSummary[];
+
+        /** ボード固有情報 */
+        boardData?: any;
     }
 
     /**
