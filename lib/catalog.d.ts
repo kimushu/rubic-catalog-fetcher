@@ -204,6 +204,9 @@ declare namespace RubicCatalog {
 
         /** バリエーション一覧 */
         variations: Variation[];
+
+        /** ボード固有情報 */
+        boardData?: any;
     }
 
     /**
@@ -230,6 +233,9 @@ declare namespace RubicCatalog {
 
         /** ドキュメントのアーカイブ内パス */
         document?: LocalizedString;
+
+        /** ボード固有情報 */
+        boardData?: any;
     }
 
     /**
@@ -240,6 +246,8 @@ declare namespace RubicCatalog {
         interface Common {
             /** ランタイムの名前 */
             name: string;
+            /** ボード固有情報 */
+            boardData?: any;
         }
 
         /** Rubyランタイム(name=mruby) */
