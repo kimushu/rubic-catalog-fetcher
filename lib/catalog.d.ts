@@ -232,7 +232,7 @@ declare namespace RubicCatalog {
         firmwareId?: string;
 
         /** ランタイムの一覧 */
-        runtimes: (Runtime.Common|Runtime.Mruby|Runtime.Duktape)[];
+        runtimes: (Runtime.Common|Runtime.Mruby|Runtime.Duktape|Runtime.Lua)[];
 
         /** ドキュメントのアーカイブ内パス */
         document?: LocalizedString;
@@ -270,7 +270,13 @@ declare namespace RubicCatalog {
         }
 
         /** JavaScript(ES5)ランタイム(name=duktape) */
-        interface Duktape extends Common{
+        interface Duktape extends Common {
+            /** バージョン(x.x.x) */
+            version: string;
+        }
+
+        /** Luaランタイム(name=lua) */
+        interface Lua extends Common {
             /** バージョン(x.x.x) */
             version: string;
         }
