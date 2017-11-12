@@ -228,13 +228,16 @@ declare namespace RubicCatalog {
         /** バリエーションの説明文 */
         description: LocalizedString;
 
+        /** プレビュー版か否か(省略時=false) */
+        preview?: boolean;
+        
         /** ファームウェアの識別ID */
         firmwareId?: string;
 
         /** ランタイムの一覧 */
         runtimes: (Runtime.Common|Runtime.Mruby|Runtime.Duktape|Runtime.Lua)[];
 
-        /** ドキュメントのアーカイブ内パス */
+        /** ドキュメントのコンテンツ(Markdown) */
         document?: LocalizedString;
 
         /** ボード固有情報 */
