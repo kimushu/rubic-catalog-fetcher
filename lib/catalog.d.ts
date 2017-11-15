@@ -254,6 +254,8 @@ declare namespace RubicCatalog {
             name: string;
             /** ボード固有情報 */
             boardData?: any;
+            /** テンプレートデータのアーカイブファイル名 */
+            template?: string;
         }
 
         /** Rubyランタイム(name=mruby) */
