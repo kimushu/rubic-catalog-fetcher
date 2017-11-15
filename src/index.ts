@@ -310,6 +310,16 @@ export class RubicCatalogFetcher {
                 if (file == null) {
                     throw new Error(`Variation file not found: ${v.path}`);
                 }
+
+                // Check template files for all runtimes
+                for (let r of v.runtimes) {
+                    if (r.template != null) {
+                        let file = files.find((file) => file.path === r.template);
+                        if (file == null) {
+                            throw new Error(`Template file not found: ${r.template}`);
+                        }
+                    }
+                }
             }
 
             // Store data
