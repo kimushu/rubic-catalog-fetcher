@@ -30,6 +30,7 @@
   "scripts": {
     "pretest": "npm run compile",
     "test": "node ./lib/test.js",
+    "test:proxy": "node ./lib/test.js --with-proxy",
     "compile": "tsc -p .",
     "precompile": "typescript-json-schema --noExtraProps --required ./lib/catalog.d.ts RubicCatalog.Root -o ./lib/catalog.schema.json",
     "prepublish": "npm run compile"

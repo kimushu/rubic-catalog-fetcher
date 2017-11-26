@@ -8,6 +8,10 @@ try {
 } catch (error) {
     console.warn("auth.json not found");
 }
+if (process.argv.indexOf("--with-proxy") >= 0) {
+    options.proxy = process.env.https_proxy || process.env.http_proxy;
+    console.info("Proxy enabled:", options.proxy);
+}
 
 let fetcher = new RubicCatalogFetcher(options);
 
