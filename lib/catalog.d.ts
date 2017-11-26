@@ -252,10 +252,10 @@ declare namespace RubicCatalog {
         interface Common {
             /** ランタイムの名前 */
             name: string;
-            /** ボード固有情報 */
-            boardData?: any;
             /** テンプレートデータのアーカイブファイル名 */
             template?: string;
+            /** ライブラリデータのアーカイブファイル名 */
+            library?: string;
         }
 
         /** Rubyランタイム(name=mruby) */
