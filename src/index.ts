@@ -23,7 +23,9 @@ const USER_AGENT = "@rubic/catalog-fetcher";
 export interface RubicCatalogFetcherOptions {
     auth?: GitHub.Auth;
     logger?: ConsoleLogger;
-    user_agent?: string;
+    userAgent?: string;
+    proxy?: string;
+    rejectUnauthorized?: boolean;
 }
 export interface ConsoleLogger {
     log: Function;
@@ -78,13 +80,20 @@ export class RubicCatalogFetcher {
      * @param options Options for fetcher
      */
     constructor(private options: RubicCatalogFetcherOptions = {}) {
-        this.gh = new GitHub({
+        let ghopt: GitHub.Options = {
             protocol: "https",
             headers: {
-                "user-agent": USER_AGENT + (options.user_agent ? ` (${options.user_agent})` : "")
+                "user-agent": USER_AGENT + (options.userAgent ? ` (${options.userAgent})` : "")
             },
             Promise: Promise
-        });
+        };
+        if (options.proxy != null) {
+            ghopt.proxy = options.proxy;
+        }
+        if (options.rejectUnauthorized != null) {
+            ghopt.rejectUnauthorized = options.rejectUnauthorized;
+        }
+        this.gh = new GitHub(ghopt);
         this.logger = options.logger;
         if (this.logger == null) {
             this.logger = <ConsoleLogger>{};
@@ -286,7 +295,14 @@ export class RubicCatalogFetcher {
      */
     private fetchReleaseDetail(rel: RubicCatalog.ReleaseSummary): Promise<void> {
         this.logger.info(`Downloading asset data: ${rel.tag} (${rel.url})`);
-        return pify(request)({url: rel.url, encoding: null})
+        let rqopt: any = {url: rel.url, encoding: null};
+        if (this.options.proxy != null) {
+            rqopt.proxy = this.options.proxy;
+        }
+        if (this.options.rejectUnauthorized != null) {
+            rqopt.strictSSL = this.options.rejectUnauthorized;
+        }
+        return pify(request)(rqopt)
         .then((response: request.RequestResponse) => {
             this.logger.info(`Decompressing asset data: ${rel.tag}`);
             return decompress(response.body);
