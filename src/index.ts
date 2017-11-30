@@ -232,6 +232,10 @@ export class RubicCatalogFetcher {
                     }
                 });
                 let tag = rel.tag_name;
+                if (url == null) {
+                    this.logger.warn(`No asset data for tag '${tag}'. Skipping`);
+                    return;
+                }
                 let index = tags_src.indexOf(tag);
                 let old_value: RubicCatalog.ReleaseSummary;
                 if (index < 0) {
