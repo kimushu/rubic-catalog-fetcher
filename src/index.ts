@@ -1,5 +1,5 @@
 ///<reference path="../lib/catalog.d.ts" />
-import * as GitHub from "github";
+import * as GitHub from "@octokit/rest";
 import * as Ajv from "ajv";
 import * as CJSON from "comment-json";
 import * as fs from "fs";
@@ -40,7 +40,6 @@ export interface GitHubRepository {
     branch?: string;
 }
 
-const ROOT_ID = "root";
 let ajv: Ajv.Ajv;
 
 function loadSchema() {
@@ -48,7 +47,6 @@ function loadSchema() {
     let schema = JSON.parse(
         fs.readFileSync(path.join(__dirname, "catalog.schema.json"), JSON_ENCODING)
     );
-    schema.id = ROOT_ID;
     ajv.compile(schema);
 }
 
@@ -60,9 +58,9 @@ loadSchema();
  */
 export function getValidator(name?: string): Ajv.ValidateFunction {
     if (name == null) {
-        return ajv.getSchema(ROOT_ID);
+        return ajv.getSchema(undefined);
     }
-    return ajv.getSchema(`${ROOT_ID}#/definitions/RubicCatalog.${name}`);
+    return ajv.getSchema(`#/definitions/RubicCatalog.${name}`);
 }
 
 /**
@@ -80,12 +78,10 @@ export class RubicCatalogFetcher {
      * @param options Options for fetcher
      */
     constructor(private options: RubicCatalogFetcherOptions = {}) {
-        let ghopt: GitHub.Options = {
-            protocol: "https",
+        const ghopt: GitHub.Options = {
             headers: {
                 "user-agent": USER_AGENT + (options.userAgent ? ` (${options.userAgent})` : "")
             },
-            Promise: Promise
         };
         if (options.proxy != null) {
             ghopt.proxy = options.proxy;
@@ -122,7 +118,6 @@ export class RubicCatalogFetcher {
      */
     fetchRepository(repo: GitHubRepository, current?: RubicCatalog.RepositorySummary): Promise<RubicCatalog.RepositorySummary> {
         let { branch } = repo;
-        let result;
         if (branch == null) {
             branch = "master";
         }
@@ -152,7 +147,7 @@ export class RubicCatalogFetcher {
      * @param title Name of object
      */
     private validate(obj: any, name: string, title: string): void {
-        let validator = getValidator(name);
+        const validator = getValidator(name);
         if (!validator(obj)) {
             let { errors } = validator;
             this.logger.error(`${title} has ${errors.length} error(s)`);
@@ -181,7 +176,7 @@ export class RubicCatalogFetcher {
         })
         .then((result) => {
             // Validate REPOSITORY_JSON
-            let repos_json: RubicCatalog.RepositoryDetail = CJSON.parse(
+            const repos_json: RubicCatalog.RepositoryDetail = CJSON.parse(
                 Buffer.from(result.data.content, result.data.encoding).toString(), null, true
             );
             this.validate(repos_json, "RepositoryDetail", RELEASE_JSON);
@@ -351,13 +346,13 @@ export class RubicCatalogFetcher {
      * RateLimit recording for GitHub API
      * @param data GitHub API result
      */
-    private recordRateLimit(data: any): Promise<any> {
+    private recordRateLimit(data: GitHub.AnyResponse | Promise<GitHub.AnyResponse>): Promise<any> {
         return Promise.resolve(data)
         .then((result) => {
-            let meta = (result && result.meta);
-            if (meta) {
+            const headers = (result && result.headers);
+            if (headers) {
                 ++this.limit_used;
-                this.limit_remaining = parseInt(meta["x-ratelimit-remaining"]);
+                this.limit_remaining = parseInt(headers["x-ratelimit-remaining"]);
             }
             return result;
         });
