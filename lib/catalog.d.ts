@@ -55,7 +55,7 @@ declare namespace RubicCatalog {
          * ja: 色
          * en: Color of topic
          */
-        color: null|"gray"|"blue"|"green"|"lightblue"|"orange"|"red";
+        color: undefined|"gray"|"blue"|"green"|"lightblue"|"orange"|"red";
     }
 
     /**
@@ -65,9 +65,9 @@ declare namespace RubicCatalog {
     interface Board {
         /**
          * ja: ボードクラス名 (Rubic内部実装と合わせる)
-         * (分かりやすさのためCamelCaseで書いているが、実際には
-         *  大文字小文字は区別されない)
          * ※ワークスペースのボード指定に使用されるIDであり、公開後の変更禁止。
+         * en: Name of board class (Must be accorded with Rubic implementation)
+         * (*) DO NOT CHANGE THIS FIELD AFTER PUBLICATION.
          */
         class: string;
 
@@ -77,25 +77,46 @@ declare namespace RubicCatalog {
          */
         disabled?: boolean;
 
-        /** ボード名称 */
+        /**
+         * ja: ボード名称
+         * en: Name of board
+         */
         name: LocalizedString;
 
-        /** 説明文 */
+        /**
+         * ja: 説明文
+         * en: Description
+         */
         description: LocalizedString;
 
-        /** アイコン画像(Rubic相対パス or URL) */
-        icon: string;
+        /**
+         * ja: アイコン画像(Rubic相対パス or URL)
+         * en: Icon image (Relative path in Rubic or URL)
+         */
+        icon?: string;
 
-        /** 作者名 */
+        /**
+         * ja: 作者名
+         * en: Author name
+         */
         author: LocalizedString;
 
-        /** WEBサイト URL */
-        website: LocalizedString;
+        /**
+         * ja: WEBサイト URL
+         * en: URL of website for this board
+         */
+        website?: LocalizedString;
 
-        /** プレビュー版か否か(省略時=false) */
+        /**
+         * ja: プレビュー版か否か(省略時=false)
+         * en: Set true if preview version (default: false)
+         */
         preview?: boolean;
 
-        /** トピック一覧 */
+        /**
+         * ja: トピック一覧
+         * en: List of topics
+         */
         topics: Topic[];
 
         /**
