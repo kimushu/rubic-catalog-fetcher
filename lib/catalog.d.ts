@@ -26,7 +26,7 @@ declare namespace RubicCatalog {
          * ja: ボードv1一覧 (この配列の順番が原則としてカタログ上の表示順序となる)
          * en: List of board v1 definitions (The order of this array will be used as the order of catalog list)
          */
-        boardsV1: BoardV1[];
+        boardsV1?: BoardV1[];
     }
 
     /**
