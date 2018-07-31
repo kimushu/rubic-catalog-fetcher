@@ -115,8 +115,9 @@ export class RubicCatalogFetcher {
      * Fetch repository data
      * @param repo Repository info
      * @param current Current data to merge
+     * @param ver Version suffix
      */
-    fetchRepository(repo: GitHubRepository, current?: RubicCatalog.RepositorySummary): Promise<RubicCatalog.RepositorySummary> {
+    fetchRepository(repo: GitHubRepository, current: RubicCatalog.RepositorySummaryV1 | undefined, ver: string): Promise<RubicCatalog.RepositorySummaryV1> {
         let { branch } = repo;
         if (branch == null) {
             branch = "master";
@@ -135,7 +136,7 @@ export class RubicCatalogFetcher {
         current.repo = repo.repo;
         current.branch = branch;
 
-        return this.fetchRepositoryJSON(current).then(() => {
+        return this.fetchRepositoryJSON(current, ver).then(() => {
             return current;
         });
     }
@@ -161,9 +162,10 @@ export class RubicCatalogFetcher {
 
     /**
      * Fetch REPOSITORY_JSON
-     * @param data Object to store fetched data
+     * @param repo Object to store fetched data
+     * @param ver Version suffix
      */
-    private fetchRepositoryJSON(repo: RubicCatalog.RepositorySummary): Promise<void> {
+    private fetchRepositoryJSON(repo: RubicCatalog.RepositorySummaryV1, ver: string): Promise<void> {
         return Promise.resolve()
         .then(() => {
             // Fetch REPOSITORY_JSON
@@ -176,24 +178,25 @@ export class RubicCatalogFetcher {
         })
         .then((result) => {
             // Validate REPOSITORY_JSON
-            const repos_json: RubicCatalog.RepositoryDetail = CJSON.parse(
+            const repos_json: RubicCatalog.RepositoryDetailV1 = CJSON.parse(
                 Buffer.from(result.data.content, result.data.encoding).toString(), null, true
             );
-            this.validate(repos_json, "RepositoryDetail", RELEASE_JSON);
+            this.validate(repos_json, `RepositoryDetail${ver}`, RELEASE_JSON);
             if (repos_json.releases == null) {
                 repos_json.releases = repo.cache && repo.cache.releases;
             }
             repo.cache = repos_json;
 
-            return this.fetchReleaseList(repo);
+            return this.fetchReleaseList(repo, ver);
         });
     }
 
     /**
      * Fetch releases
      * @param repo Object to store fetched data
+     * @param ver Version suffix
      */
-    private fetchReleaseList(repo: RubicCatalog.RepositorySummary): Promise<void> {
+    private fetchReleaseList(repo: RubicCatalog.RepositorySummaryV1, ver: string): Promise<void> {
         return Promise.resolve()
         .then(() => {
             // Fetch release list
@@ -281,7 +284,7 @@ export class RubicCatalogFetcher {
                     return promise
                     .then(() => {
                         let rel = dest.find((rel) => rel.tag === tag);
-                        return this.fetchReleaseDetail(rel);
+                        return this.fetchReleaseDetail(rel, ver);
                     });
                 }, Promise.resolve()
             );
@@ -291,8 +294,9 @@ export class RubicCatalogFetcher {
     /**
      * Fetch ReleaseDetail
      * @param rel Object to store fetched data
+     * @param ver Version suffix
      */
-    private fetchReleaseDetail(rel: RubicCatalog.ReleaseSummary): Promise<void> {
+    private fetchReleaseDetail(rel: RubicCatalog.ReleaseSummaryV1, ver: string): Promise<void> {
         this.logger.info(`Downloading asset data: ${rel.tag} (${rel.url})`);
         let rqopt: any = {url: rel.url, encoding: null};
         if (this.options.proxy != null) {
@@ -314,10 +318,10 @@ export class RubicCatalogFetcher {
             }
 
             // Validate RELEASE_JSON
-            let rel_json: RubicCatalog.ReleaseDetail = CJSON.parse(
+            let rel_json: RubicCatalog.ReleaseDetailV1 = CJSON.parse(
                 rel_json_file.data.toString(), null, true
             );
-            this.validate(rel_json, "ReleaseDetail", RELEASE_JSON);
+            this.validate(rel_json, `ReleaseDetail${ver}`, RELEASE_JSON);
 
             // Check files for all variations
             for (let v of rel_json.variations) {

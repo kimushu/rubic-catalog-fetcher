@@ -18,20 +18,20 @@ let fetcher = new RubicCatalogFetcher(options);
 Promise.resolve()
 .then(() => {
     console.log("=".repeat(80));
-    console.log("TEST 1 (Non-merge)");
+    console.log("TEST 1 (Non-merge, v0)");
     return fetcher.fetchRepository({
         host: "github",
         owner: "kimushu",
         repo: "rubic-firmware-sample"
-    }).then((result) => {
+    }, undefined, "").then((result) => {
         console.log("-".repeat(80));
-        console.log("RESULT 1 (Non-merge)");
+        console.log("RESULT 1 (Non-merge, v0)");
         console.log(JSON.stringify(result, null, 2));
     });
 })
 .then(() => {
     console.log("=".repeat(80));
-    console.log("TEST 2 (Merge)");
+    console.log("TEST 2 (Merge, v0)");
     return fetcher.fetchRepository({
         host: "github",
         owner: "kimushu",
@@ -83,13 +83,87 @@ Promise.resolve()
                 }
             ]
         }
-    }).then((result) => {
+    }, "").then((result) => {
         console.log("-".repeat(80));
-        console.log("RESULT 2 (Merge)");
+        console.log("RESULT 2 (Merge, v0)");
         console.log(JSON.stringify(result, null, 2));
     });
 })
 .then(() => {
+    console.log("=".repeat(80));
+    console.log("TEST 3 (Non-merge, v1)");
+    return fetcher.fetchRepository({
+        host: "github",
+        owner: "kimushu",
+        repo: "rubic-firmware-sample"
+    }, undefined, "").then((result) => {
+        console.log("-".repeat(80));
+        console.log("RESULT 3 (Non-merge, v1)");
+        console.log(JSON.stringify(result, null, 2));
+    });
+})
+.then(() => {
+    console.log("=".repeat(80));
+    console.log("TEST 4 (Merge, v1)");
+    return fetcher.fetchRepository({
+        host: "github",
+        owner: "kimushu",
+        repo: "rubic-firmware-sample"
+    }, {
+        uuid: "12345678-0000-0000-0000-000000000000",
+        host: null,
+        owner: null,
+        repo: null,
+        rubicVersion: ">= 1.0.0",
+        cache: {
+            name: {en: ""},
+            description: {en: ""},
+            releases: [
+                {
+                    tag: "v0.2",
+                    name: "",
+                    description: "",
+                    published_at: 1234567890000,
+                    updated_at: 1234567890000,
+                    author: "test",
+                    url: "",
+                    cache: {
+                        variations: []
+                    }
+                },
+                {
+                    tag: "v0.1",
+                    name: "",
+                    description: "",
+                    published_at: 1490501537000,
+                    updated_at: 1490501537000,
+                    author: "test",
+                    url: "",
+                    cache: {
+                        rubicVersion: ">= 1.0.0",
+                        variations: []
+                    }
+                },
+                {
+                    tag: "v0.0",
+                    name: "",
+                    description: "",
+                    published_at: 1490501537000,
+                    updated_at: 1490501537000,
+                    author: "test",
+                    url: "",
+                    cache: {
+                        variations: []
+                    }
+                }
+            ]
+        }
+    }, "").then((result) => {
+        console.log("-".repeat(80));
+        console.log("RESULT 4 (Merge, v1)");
+        console.log(JSON.stringify(result, null, 2));
+    });
+}).then(() => {
     fetcher.reportRateLimit();
     process.exit();
 }, (reason) => {
