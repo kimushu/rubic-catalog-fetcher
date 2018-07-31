@@ -21,6 +21,12 @@ declare namespace RubicCatalog {
          * en: List of board definitions (The order of this array will be used as the order of catalog list)
          */
         boards: Board[];
+
+        /**
+         * ja: ボードv1一覧 (この配列の順番が原則としてカタログ上の表示順序となる)
+         * en: List of board v1 definitions (The order of this array will be used as the order of catalog list)
+         */
+        boardsV1: BoardV1[];
     }
 
     /**
@@ -127,6 +133,24 @@ declare namespace RubicCatalog {
     }
 
     /**
+     * ja: ボード定義v1 (catalog.jsonの一部)
+     * en: Board definition (v1)
+     */
+    interface BoardV1 extends Board {
+        /**
+         * ja: 対応するRubicのバージョンの範囲 (これを満たさないボードは非表示)
+         * en: Range of version of Rubic which supports this board
+         */
+        rubicVersion?: string;
+
+        /**
+         * リポジトリ一覧
+         * この配列の順番が原則としてカタログ上の表示順序となる。
+         */
+        repositories: RepositorySummaryV1[];
+    }
+
+    /**
      * リポジトリ概要情報 (catalog.jsonの一部)
      */
     interface RepositorySummary {
@@ -162,6 +186,20 @@ declare namespace RubicCatalog {
     }
 
     /**
+     * リポジトリ概要情報v1 (catalog.jsonの一部)
+     */
+    interface RepositorySummaryV1 extends RepositorySummary {
+        /**
+         * ja: 対応するRubicのバージョンの範囲 (これを満たさないリポジトリは非表示)
+         * en: Range of version of Rubic which supports this repository
+         */
+        rubicVersion?: string;
+
+        /** 詳細情報(rubic-repository.jsonの中身) */
+        cache?: RepositoryDetailV1;
+    }
+
+    /**
      * リポジトリ詳細定義 (rubic-repository.json)
      */
     interface RepositoryDetail {
@@ -179,6 +217,20 @@ declare namespace RubicCatalog {
 
         /** ボード固有情報 */
         boardData?: any;
+    }
+
+    /**
+     * リポジトリ詳細定義v1 (rubic-repository.json)
+     */
+    interface RepositoryDetailV1 extends RepositoryDetail {
+        /**
+         * ja: 対応するRubicのバージョンの範囲 (これを満たさないリポジトリは選択不可)
+         * en: Range of version of Rubic which supports this repository
+         */
+        rubicVersion?: string;
+
+        /** リリース一覧 */
+        releases?: ReleaseSummaryV1[];
     }
 
     /**
@@ -217,6 +269,14 @@ declare namespace RubicCatalog {
     }
 
     /**
+     * リリース概要定義v1 (catalog.jsonの一部)
+     */
+    interface ReleaseSummaryV1 extends ReleaseSummary {
+        /** zipに格納された release.json のキャッシュ */
+        cache: ReleaseDetailV1;
+    }
+
+    /**
      * リリース詳細定義 (release.jsonの中身そのもの)
      */
     interface ReleaseDetail {
@@ -231,6 +291,20 @@ declare namespace RubicCatalog {
 
         /** ボード固有情報 */
         boardData?: any;
+    }
+
+    /**
+     * リリース詳細定義v1 (release.jsonの中身そのもの)
+     */
+    interface ReleaseDetailV1 extends ReleaseDetail {
+        /**
+         * ja: 対応するRubicのバージョンの範囲 (これを満たさないリリースは選択不可)
+         * en: Range of version of Rubic which supports this release
+         */
+        rubicVersion?: string;
+
+        /** バリエーション一覧 */
+        variations: VariationV1[];
     }
 
     /**
@@ -263,6 +337,17 @@ declare namespace RubicCatalog {
 
         /** ボード固有情報 */
         boardData?: any;
+    }
+
+    /**
+     * バリエーション定義 (release.jsonの一部)
+     */
+    interface VariationV1 extends Variation {
+        /**
+         * ja: 対応するRubicのバージョンの範囲 (これを満たさないバリエーションは選択不可)
+         * en: Range of version of Rubic which supports this variation
+         */
+        rubicVersion?: string;
     }
 
     /**
